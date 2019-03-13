@@ -9,7 +9,7 @@ client_checked = False
 
 # holds all the connection of server
 connections = []
-def build_server(port):
+def buildServer(port):
     # set up sock for listening one node
     sockForListen = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sockForListen.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
