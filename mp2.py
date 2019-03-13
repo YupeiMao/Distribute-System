@@ -19,7 +19,7 @@ def buildServer(port,name):
 
     host = socket.gethostname()
     sockForListen.bind((host,port))
-    s.listen()
+    sockForListen.listen()
     c, a = sockForListen.accept()
 
     while True:
