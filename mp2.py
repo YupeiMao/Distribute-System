@@ -41,9 +41,36 @@ def connectServer(port, name):
         sock.connect((host, port))
     except Exception as e:
         print("fail to connect to central")
-    send_str = "CONNECT {} {} {}".format(name,socket.gethostbyname(socket.gethostname()), port)+'\n'
+    send_str = "CONNECT {} {} {}".format(name,socket.gethostbyname(gethostname()), port)+'\n'
     sock.send((send_str.encode()))
+    while True:
+		data = sock.recv(2048)
+		if(handle_reply(data)):
+			break
+def handle_introduce(line):
+	neighbor = line.split(" ")
 
+
+
+
+# handle transaction
+# IMPORTANT gossip here
+def handle_transaction(line):
+	transaction = line.split(" ")
+
+
+
+def handle_reply(data):
+	if (str(data) == "QUIT" or str(data) == "DIE"):
+		return 1
+	reply = str(data).split("\n")
+	for line in reply:
+		word = line.split(" ")
+		if (word[0] == "INTRODUCE"):
+			handle_introduce(line)
+		elif (word[0] == "TRANSACTION"):
+			handle_transaction(line)
+	return 0
 def main():
     #parse the command line
     parser = argparse.ArgumentParser(description = "Distributed Chat")
