@@ -44,9 +44,9 @@ def connectServer(port, name):
     send_str = "CONNECT {} {} {}".format(name,socket.gethostbyname(gethostname()), port)+'\n'
     sock.send((send_str.encode()))
     while True:
-	data = sock.recv(2048)
-	if(handle_reply(data)):
-		break
+        data = sock.recv(2048)
+        if(handle_reply(data)):
+            break
 def handle_introduce(line):
 	neighbor = line.split(" ")
 
