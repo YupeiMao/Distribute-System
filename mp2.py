@@ -10,7 +10,7 @@ client_checked = False
 # holds all the connection of server
 connections = []
 
-def buildServer(port,name):
+def buildServer(port):
     #create server sock for listening
     sockForListen = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sockForListen.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -41,9 +41,9 @@ def connectServer(port, name):
         sock.connect((host, port))
     except Exception as e:
         print("fail to connect to central")
-    send_str = "CONNECT {} {} {}".format(name,socket.gethostbyname(socket.gethostname()), port)
-    print(send_str)
-    # sock.send(bytes(send_str.encode()))
+    send_str = "CONNECT {} {} {}".format(name,socket.gethostbyname(gethostname()), port)+'\n'
+    sock.send((send_str.encode()))
+
 def main():
     #parse the command line
     parser = argparse.ArgumentParser(description = "Distributed Chat")
@@ -54,7 +54,7 @@ def main():
     name = args.name
     port = args.port
 
-    server = threading.Thread(target=buildServer, args=(port,name))
+    server = threading.Thread(target=buildServer, args=(port,))
     client = threading.Thread(target=connectServer, args=(port, name))
 
     server.start()
