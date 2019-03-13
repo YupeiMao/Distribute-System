@@ -11,53 +11,15 @@ client_checked = False
 connections = []
 
 def buildServer(port):
-    #create server sock for listening
-    sockForListen = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sockForListen.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
-    #initialize socket
-
-    host = socket.gethostname()
-    sockForListen.bind((host,port))
-    sockForListen.listen()
-    c, a = sockForListen.accept()
-
-    while True:
-        data = c.recv(1024)
-        if not data:
-            # print fail message
-            fail = " has left"
-            print(fail)
-            c.close()
-            break
-        print(data)
-
-
-
-def handle_introduce(line):
-	neighbor = line.split(" ")
+    pass
 
 
 
 
-# handle transaction
-# IMPORTANT gossip here
-def handle_transaction(line):
-	transaction = line.split(" ")
 
 
 
-def handle_reply(data):
-	if (str(data) == "QUIT" or str(data) == "DIE"):
-		return 1
-	reply = str(data).split("\n")
-	for line in reply:
-		word = line.split(" ")
-		if (word[0] == "INTRODUCE"):
-			handle_introduce(line)
-		elif (word[0] == "TRANSACTION"):
-			handle_transaction(line)
-	return 0
+
 
 def connectServer(port, name):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -66,14 +28,18 @@ def connectServer(port, name):
         host = socket.gethostbyname(central)
         sock.connect((host, 6666))
     except Exception as e:
-        print("fail to connect to central")
+        print("Fail to connect to central")
     send_str = "CONNECT " + name + " " + str(socket.gethostname()) + " "+str(port) + "\n"
-    print(send_str)
+    # print(send_str)
     sock.send(send_str.encode())
+
+    #receive indroduction
     while True:
         data = sock.recv(2048)
         if(handle_reply(data)):
             break
+
+
 def main():
     #parse the command line
     parser = argparse.ArgumentParser(description = "Distributed Chat")
@@ -89,6 +55,27 @@ def main():
 
     server.start()
     client.start()
+
+
+def handle_reply(data):
+	if (str(data) == "QUIT" or str(data) == "DIE"):
+		return 1
+	reply = str(data).split("\n")
+	for line in reply:
+		word = line.split(" ")
+		if (word[0] == "INTRODUCE"):
+			handle_introduce(line)
+		elif (word[0] == "TRANSACTION"):
+			handle_transaction(line)
+	return 0
+
+def handle_introduce(line):
+	neighbor = line.split(" ")
+
+# handle transaction
+# IMPORTANT gossip here
+def handle_transaction(line):
+	transaction = line.split(" ")
 
 
 if __name__ == '__main__':
