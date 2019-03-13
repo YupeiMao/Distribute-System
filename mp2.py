@@ -1,15 +1,23 @@
 import socket
-import argparse
 import threading
+import sys
+import time
+import argparse
+from threading import Lock
 
-central = "sp19-cs425-g04-01.cs.illinois.edu"
 
-server_checked = False
-client_checked = False
+# hard-coded IP addresses for service
+address = "sp19-cs425-g04-01.cs.illinois.edu"
+
+# hard-coded IP addresses for service
+port = 4444
 
 # holds all the connection of server
 connections = []
-def buildServer(port):
+
+
+# build server for other nodes
+def build_server(port):
     # set up sock for listening one node
     sockForListen = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sockForListen.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -42,21 +50,7 @@ def handle_node(c, a):
 
 		handle_transaction(str(data))
 
-
-def connectServer(port, name):
-    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    try:
-        host = socket.gethostbyname(central)
-        sock.connect((host, port))
-    except Exception as e:
-        print("fail to connect to central")
-    send_str = "CONNECT " + name + " " + str(socket.gethostname()) + " " + str(port) + "\n"
-    sock.send((send_str.encode()))
-    while True:
-        data = sock.recv(2048)
-        if(handle_reply(data)):
-            break
+# handle one introduce node
 def handle_introduce(line):
 	neighbor = line.split(" ")
 
@@ -81,22 +75,42 @@ def handle_reply(data):
 		elif (word[0] == "TRANSACTION"):
 			handle_transaction(line)
 	return 0
+
+
+# connect to service and handle the response
+def connect_service(port, name):
+	# create socket for service
+	sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+	sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+	sock.connect((socket.gethostbyname(address), port))
+	host = socket.gethostname()
+	# send CONNECT to service
+	msg = "CONNECT " + name + " " + str(host) + " " + str(port) + "\n"
+	sock.send(msg.encode())
+	# start receiving message from service
+	while True:
+		data = sock.recv(2048)
+		if(handle_reply(data)):
+			break
+
+
 def main():
-    #parse the command line
-    parser = argparse.ArgumentParser(description = "Distributed Chat")
-    parser.add_argument('name', type=str)
-    parser.add_argument('port',type=int)
+	# parse the command line
+	parser = argparse.ArgumentParser(description = 'Cryptocurrency')
+	parser.add_argument('name', type=str)
+	parser.add_argument('port', type=int)
+	args = parser.parse_args()
+	name = args.name
+	port = args.port
 
-    args = parser.parse_args()
-    name = args.name
-    port = args.port
+	server = threading.Thread(target=build_server, args=(port, ))
+	# client = threading.Thread(target=connectService, args=(port, ), kwargs={"name": name})
+	client = threading.Thread(target=connect_service, args=(port, name))
 
-    server = threading.Thread(target=buildServer, args=(port,))
-    client = threading.Thread(target=connectServer, args=(port, name))
+	# start server and client
+	server.start()
+	client.start()
 
-    server.start()
-    client.start()
-
-
+# entry point for application
 if __name__ == '__main__':
     main()
