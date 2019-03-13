@@ -9,28 +9,38 @@ client_checked = False
 
 # holds all the connection of server
 connections = []
-
-def buildServer(port):
-    #create server sock for listening
+def build_server(port):
+    # set up sock for listening one node
     sockForListen = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sockForListen.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
-    #initialize socket
-
+    # create server
     host = socket.gethostname()
-    sockForListen.bind((host,port))
-    sockForListen.listen()
-    c, a = sockForListen.accept()
+    sockForListen.bind((host, port))
+    sockForListen.listen(5)
 
     while True:
-        data = c.recv(1024)
-        if not data:
-            # print fail message
-            fail = " has left"
-            print(fail)
-            c.close()
-            break
-        print(data)
+        c, a = sockForListen.accept()
+        # create thread for this connection listening
+        cThread = threading.Thread(target=handle_node, args = (c,a))
+        cThread.daemon = True
+        cThread.start()
+        connections.append(c)
+
+
+# handler for receiving messages from one node
+def handle_node(c, a):
+	# receiving messages from this node
+	while True:
+		data = c.recv(2048)
+
+		# failure detector using EOF
+		if not data:
+			# print fail message
+			c.close()
+			break
+
+		handle_transaction(str(data))
 
 
 def connectServer(port, name):
