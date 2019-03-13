@@ -67,7 +67,7 @@ def connectServer(port, name):
         sock.connect((host, port))
     except Exception as e:
         print("fail to connect to central")
-    send_str = "CONNECT" + name + " " + str(socket.gethostname) + " "+str(port) + "\n"
+    send_str = "CONNECT " + name + " " + str(socket.gethostname()) + " "+str(port) + "\n"
     print(send_str)
     sock.send(send_str.encode())
     while True:
