@@ -64,7 +64,7 @@ def connectServer(port, name):
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     try:
         host = socket.gethostbyname(central)
-        sock.connect((host, port))
+        sock.connect((host, 6666))
     except Exception as e:
         print("fail to connect to central")
     send_str = "CONNECT " + name + " " + str(socket.gethostname()) + " "+str(port) + "\n"
