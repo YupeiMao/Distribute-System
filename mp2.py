@@ -42,8 +42,8 @@ def connectServer(port, name):
     except Exception as e:
         print("fail to connect to central")
     send_str = "CONNECT {} {} {}".format(name,socket.gethostname(), port)
-    sock.send(bytes(send_str.encode()))
-
+    print(send_str)
+    # sock.send(bytes(send_str.encode()))
 def main():
     #parse the command line
     parser = argparse.ArgumentParser(description = "Distributed Chat")
