@@ -42,7 +42,7 @@ def connectServer(port, name):
     except Exception as e:
         print("fail to connect to central")
     send_str = "CONNECT {} {} {}".format(name,socket.gethostname(), port)
-    sock.send(bytes(send_str,'utf-8'))
+    sock.send(bytes(send_str.encode()))
 
 def main():
     #parse the command line
