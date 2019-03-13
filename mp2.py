@@ -11,7 +11,26 @@ client_checked = False
 connections = []
 
 def buildServer(port):
-    pass
+    #create server sock for listening
+    sockForListen = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sockForListen.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+    #initialize socket
+
+    host = socket.gethostname()
+    sockForListen.bind((host,port))
+    sockForListen.listen()
+    c, a = sockForListen.accept()
+
+    while True:
+        data = c.recv(1024)
+        if not data:
+            # print fail message
+            fail = " has left"
+            print(fail)
+            c.close()
+            break
+        print(data)
 
 
 
