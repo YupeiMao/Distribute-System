@@ -10,7 +10,7 @@ client_checked = False
 # holds all the connection of server
 connections = []
 
-def buildServer(port):
+def buildServer(port,name):
     #create server sock for listening
     sockForListen = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sockForListen.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -54,7 +54,7 @@ def main():
     name = args.name
     port = args.port
 
-    server = threading.Thread(target=buildServer, args=(port))
+    server = threading.Thread(target=buildServer, args=(port,name))
     client = threading.Thread(target=connectServer, args=(port, name))
 
     server.start()
