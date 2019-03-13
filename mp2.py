@@ -70,9 +70,9 @@ def connectServer(port, name):
     send_str = "CONNECT" + name + " " + str(socket.gethostname) + " "+str(port) + "\n"
     sock.send(send_str.encode())
     while True:
-		data = sock.recv(2048)
-		if(handle_reply(data)):
-			break
+        data = sock.recv(2048)
+        if(handle_reply(data)):
+            break
 def main():
     #parse the command line
     parser = argparse.ArgumentParser(description = "Distributed Chat")
