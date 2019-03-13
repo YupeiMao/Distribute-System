@@ -40,7 +40,7 @@ def connectServer(port, name):
         host = socket.gethostbyname(central)
         sock.connect((host, port))
     except Exception as e:
-        continue
+        print("fail to connect to central")
     sock.send("CONNECT {} {} {}".format(name,socket.gethostname(), port))
 
 def main():
