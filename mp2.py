@@ -133,8 +133,8 @@ def handle_service_msg(data):
 		return 1
 	reply = str(data).split("\n")
 	for line in reply:
-		word = line.split(" ")
         logging.debug(line)
+		word = line.split(" ")
 		if (word[0] == "INTRODUCE"):
 			discovery = threading.Thread(target=handle_introduce, args=(line, ))
 			discovery.start()
